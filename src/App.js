@@ -5,6 +5,7 @@ import { useState } from 'react';
 function App() {
   const [newTask, setNewTask] = useState('');
   const [tasks, setTasks] = useState([]);
+  const [justAddedTasks, setJustAddedTasks] = useState([]);
 
   function handleChange(event) {
     setNewTask(event.target.value);
@@ -13,38 +14,57 @@ function App() {
   function handleNewTaskSubmit(event) {
     event.preventDefault();
     if (newTask.trim() !== '') {
-      setTasks([...tasks, newTask.trim()]);
-      setNewTask('');
+      setJustAddedTasks([...tasks, newTask.trim()]);
+      setNewTask("");
     }
   }
 
   function handleDragStart(event, index) {
     event.dataTransfer.setData('text', index);
+    event.dataTransfer.setData('source', 'abc'); //source, source
   }
   
-  function handleDrop(event, index) {
+  function handleDrop(event, index, target) {
     event.preventDefault();
-    const draggingIndex = event.dataTransfer.getData('text');
-    const newTasks = tasks.filter((task, i) => i !== draggingIndex);
-    newTasks.splice(index, 0, tasks[draggingIndex]);
-    setTasks(newTasks);
+    const draggingIndex = event.dataTransfer.getData("text");
+    const source = event.dataTransfer.getData("source");
+
+    if (source === "abc") {
+      const newTasks = tasks.filter((task, i) => i !== draggingIndex);
+      newTasks.splice(index, 0, tasks[draggingIndex]);
+      setTasks(newTasks);
+    } else if (source === "justAddedTasks") {
+      const newJustAddedTasks = justAddedTasks.filter((task, i) => i !== draggingIndex);
+      setJustAddedTasks(newJustAddedTasks);
+
+      const newTasks = [...tasks];
+      newTasks.splice(index, 0, justAddedTasks[draggingIndex]);
+      setTasks(newTasks);
+    }
   }
   
   function handleDragOver(event, index) {
     event.preventDefault();
-    // const draggingIndex = event.dataTransfer.getData('text');
-    // if (draggingIndex !== index) {
-    //   const targetElement = event.target;
-    //   const targetRect = targetElement.getBoundingClientRect();
-    //   const targetCenter = targetRect.y + targetRect.height / 2;
-    //   if (event.clientY - targetCenter > 0) {
-    //     targetElement.style.borderBottom = 'solid black 2px';
-    //     targetElement.style.borderTop = '';
-    //   } else {
-    //     targetElement.style.borderTop = 'solid black 2px';
-    //     targetElement.style.borderBottom = '';
-    //   }
-    // }
+    const target = event.target;
+
+    if (target.classList.contains("tasks")) {
+      target.style.borderTop = "";
+      target.style.borderBottom = "";
+
+      const draggingIndex = event.dataTransfer.getData("text");
+      const source = event.dataTransfer.getData("source");
+
+      if (source === "abc") {
+        const targetIndex = Array.from(target.parentNode.children).indexOf(target);
+        if (draggingIndex < targetIndex) {
+          target.style.borderTop = "solid black 2px";
+        } else {
+          target.style.borderBottom = "solid black 2px";
+        }
+       } else if (source === "justAdded") {
+        target.style.borderBottom = "solid black 2px";
+      }
+    }
   }
 
   return (
@@ -60,28 +80,45 @@ function App() {
           />
           <button type="submit">Add task</button>
         </form>
-        <div className='justAdded'>
-          
-        </div>
-        <div className='abc'>
-        {tasks.map((task, index) => (
-          <div className='tasks' key={index}
+        <div className="justAdded" onDragOver={(event) => handleDragOver(event, null, "justAdded")} onDrop={(event) => handleDrop(event, justAddedTasks.length, "justAdded")}>
+        {justAddedTasks.map((task, index) => (
+          <div
+            className="tasks"
+            key={index}
             draggable
-            onDragStart={(event) => handleDragStart(event, index)}
-            onDragOver={(event) => handleDragOver(event, index)}
-            onDrop={(event) => handleDrop(event, index)}
+            onDragStart={(event) => handleDragStart(event, index, "justAdded")}
+            onDragOver={(event) => handleDragOver(event, index, "justAdded")}
+            onDrop={(event) => handleDrop(event, index, "justAdded")}
             onDragEnd={(event) => {
-              event.target.style.borderTop = '';
-              event.target.style.borderBottom = '';
+              event.target.style.borderTop = "";
+              event.target.style.borderBottom = "";
+            }}
+          >
+            {task}
+        </div>
+        ))}
+        </div>
+        <div className="abc" onDragOver={(event) => handleDragOver(event, null, "abc")} onDrop={(event) => handleDrop(event, tasks.length, "abc")}>
+        {tasks.map((task, index) => (
+          <div
+            className="tasks"
+            key={index}
+            draggable
+            onDragStart={(event) => handleDragStart(event, index, "abc")}
+            onDragOver={(event) => handleDragOver(event, index, "abc")}
+            onDrop={(event) => handleDrop(event, index, "abc")}
+            onDragEnd={(event) => {
+              event.target.style.borderTop = "";
+              event.target.style.borderBottom = "";
             }}
           >
             {task}
           </div>
         ))}
       </div>
-      </section>
-    </div>
-  );
+    </section>
+  </div>
+  )
 }
 
 export default App;
