@@ -1,6 +1,25 @@
 .App {
   text-align: center;
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+} 
+
+.justAdded {
+  border: 3px solid blue;
+  padding: 10px;
 }
+
+.abc {
+  border: 3px solid red;
+  padding: 10px;
+}
+
+.tasks {
+  border: 3px solid #73AD21;
+  padding: 10px;
+}
+
 
 .App-logo {
   height: 40vmin;
