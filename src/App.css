@@ -5,21 +5,20 @@
   padding: 10px;
 } 
 
-.justAdded {
-  border: 3px solid blue;
-  padding: 10px;
-}
-
-.abc {
-  border: 3px solid red;
-  padding: 10px;
-}
-
-.tasks {
+.firstBox {
   border: 3px solid #73AD21;
   padding: 10px;
 }
 
+.secondBox {
+  border: 3px solid blue;
+  padding: 10px;
+}
+
+.box {
+  border: 3px solid red;
+  padding: 10px;
+}
 
 .App-logo {
   height: 40vmin;
