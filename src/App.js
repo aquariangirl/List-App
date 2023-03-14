@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 function App() {
   const [task, setTask] = useState('');
-  const [index, setIndex] = useState(0); // define index state variable
+  const [setIndex] = useState(0); // define index state variable
   const [newTask, setNewTask] = useState('');
   const [justAddedTasks, setJustAddedTasks] = useState([]);
 
@@ -24,52 +24,82 @@ function App() {
 
   function handleDragStart(event, index) {
     event.preventDefault();
-    event.dataTransfer.setData('text', index); // grabs the text and index from just added task
     this.style.opacity = '0.6';
+    event.dataTransfer.setData('text', index); // grabs the text and index from just added task
+    event.dataTransfer.setData('source', 'secondBox');
   }
   
   function handleDrag(event, index) {
-    event.dataTransfer.setData("text", event.target.id);
-  }
-  
-  function handleDrop(event, index) {
     event.preventDefault();
+    event.dataTransfer.setData("text", event.target.id);
+
     const target = event.target;
-  
-    if (target.classList.contains("secondBox")) {
-      target.style.border = "";   
-  
+
+    if (target.classList.contains("tasks")) {
+      target.style.borderTop = "";
+      target.style.borderBottom = "";
+
       const draggingIndex = event.dataTransfer.getData("text");
       const source = event.dataTransfer.getData("source");
 
-  
-      if (source === "justAdded") {
-      const newJustAddedTasks = justAddedTasks.filter((task, i) => i !== draggingIndex);
-      setJustAddedTasks(newJustAddedTasks);
+      if (source === "secondBox") {
+        const targetIndex = Array.from(target.parentNode.children).indexOf(target);
+        if (draggingIndex < targetIndex) {
+          target.style.borderTop = "solid black 2px";
+        } else {
+          target.style.borderBottom = "solid black 2px";
+        }
+       } else if (source === "justAdded") {
+        target.style.borderBottom = "solid black 2px";
+      }
     }
 
-    const newTasks = [...task];
-    newTasks.splice(index, 0, justAddedTasks[draggingIndex]);
-    setTask(newTasks);
+
+  }
+  
+  function handleDrop(event, index, target) {
+    event.preventDefault();
+    const draggingIndex = event.dataTransfer.getData("text");
+    const source = event.dataTransfer.getData("source");
+
+    if (source === "abc") {
+      const newTasks = task.filter((task, i) => i !== draggingIndex);
+      newTasks.splice(index, 0, task[draggingIndex]);
+      setTask(newTasks);
+    } else if (source === "justAddedTasks") {
+      const newJustAddedTasks = justAddedTasks.filter((task, i) => i !== draggingIndex);
+      setJustAddedTasks(newJustAddedTasks);
+
+      const newTasks = [...task];
+      newTasks.splice(index, 0, justAddedTasks[draggingIndex]);
+      setTask(newTasks);
+      setIndex(0); // reset the index
   }
 }
 
-
-
   return (
-    <div className='App'>
+    
+    <div className='App'> 
+    
       <section style={{ backgroundColor: 'white', width: '500px', height: '500px', border: '1px solid black' }}>
         {/* form for user input */}
+        <br></br>
         <form onSubmit={handleTaskSubmit}>
-          <input type="text"
+          <input 
+            type="text"
             id="taskInput"
             name="task"
             placeholder="Enter New Task"
             value={newTask}
             onChange={handleChange} // allows the textbox to not clear as user types
+            draggable
+            onDragStart={() => {
+              setIndex(justAddedTasks.length);
+            }}
           />
           <button type="submit">Add task</button>
-        </form>
+        </form> 
+        <br></br>
 
         {/* div for just added tasks box/section */}
         <div className="box">
@@ -101,21 +131,31 @@ function App() {
               </div>
             ))}
           </div>
-          
+        
           {/* div for task list */}
           <div className="secondBox" 
             onDragOver={(event) => handleDrag(event, null, "justAdded")} 
-            onDrop={(event) => handleDrop(event, justAddedTasks.length, "justAdded")}
+            onDrop={(event) => handleDrop(event, justAddedTasks.length, "secondBox")}
           >
-            {justAddedTasks.map((task, index) => (
+            {/* edit line */}
+            {justAddedTasks.map((justAddedTasks, index) => (
               <div
                 className="tasks" 
                 id="someNewTask"
                 draggable
                 key={index}
-                onDrop={(event) => handleDrop(event, "justAdded")}
-                onDragOver={(event) => event.preventDefault()}
+                onDragStart={(event) => handleDragStart(event, index, "secondBox")}
+                onDragOver={(event) => handleDrag(event, index, "secondBox")}
+                onDrop={(event) => handleDrop(event, index, "secondBox")}
+                onDragEnd={(event) => {
+                event.target.style.borderTop = "";
+                event.target.style.borderBottom = "";
+                
+                // onDrop={(event) => handleDrop(event, "task")}
+                // onDragOver={(event) => event.preventDefault()}
+                }}
               >
+                {/* <span>{task}</span> */}
               </div>
             ))}
           </div>
