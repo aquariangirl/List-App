@@ -2,6 +2,20 @@ import './App.css';
 import React from 'react';
 import { useState } from 'react';
 
+
+function handleTargetDragOver(event) {
+  event.preventDefault();
+  event.target.style.backgroundColor = "lightgray";
+}
+
+function handleTargetDrop(event) {
+  event.preventDefault();
+  event.target.style.backgroundColor = "";
+  const taskId = event.dataTransfer.getData("text");
+  const taskElement = document.getElementById(taskId);
+  event.target.appendChild(taskElement);
+}
+
 function App() {
   const [task, setTask] = useState('');
   const [setIndex] = useState(0); // define index state variable
@@ -24,22 +38,22 @@ function App() {
 
   function handleDragStart(event, index) {
     event.preventDefault();
-    this.style.opacity = '0.6';
+    // this.style.opacity = '0.6'; // dragged item has reduced opacity
     event.dataTransfer.setData('text', index); // grabs the text and index from just added task
     event.dataTransfer.setData('source', 'secondBox');
   }
   
-  function handleDrag(event, index) {
+  function handleDragOver(event, index) {
     event.preventDefault();
     event.dataTransfer.setData("text", event.target.id);
 
     const target = event.target;
 
-    if (target.classList.contains("tasks")) {
+    if (target.classList.contains("task")) {
       target.style.borderTop = "";
       target.style.borderBottom = "";
 
-      const draggingIndex = event.dataTransfer.getData("text");
+      const draggingIndex = event.dataTransfer.getData("task"); // text?
       const source = event.dataTransfer.getData("source");
 
       if (source === "secondBox") {
@@ -53,16 +67,15 @@ function App() {
         target.style.borderBottom = "solid black 2px";
       }
     }
-
-
   }
-  
+
   function handleDrop(event, index, target) {
-    event.preventDefault();
-    const draggingIndex = event.dataTransfer.getData("text");
+    event.stopPropagation(); 
+    // event.preventDefault();
+    const draggingIndex = event.dataTransfer.getData("task"); // text?
     const source = event.dataTransfer.getData("source");
 
-    if (source === "abc") {
+    if (source === "secondBox") {
       const newTasks = task.filter((task, i) => i !== draggingIndex);
       newTasks.splice(index, 0, task[draggingIndex]);
       setTask(newTasks);
@@ -75,6 +88,10 @@ function App() {
       setTask(newTasks);
       setIndex(0); // reset the index
   }
+
+  
+  
+
 }
 
   return (
@@ -105,22 +122,23 @@ function App() {
         <div className="box">
           {/* maps the newly added task so that it can be dragged  */}
           <div className="firstBox" 
-            onDragOver={(event) => handleDrag(event, null, "justAdded")} 
+            onDragOver={(event) => handleDragOver(event, null, "justAdded")} 
             onDrop={(event) => handleDrop(event, justAddedTasks.length, "justAdded")}
           >
             {justAddedTasks.map((task, index) => (
               
               <div
-                className="tasks"
+                className="task"
                 id="someNewTask"
                 draggable
                 key={index}
+
                 // prop responsible for setting the data that will be transferred when the element is dropped
-                dragStart={(event) => handleDragStart(event, index, "justAdded")}
+                handleDragStart={(event) => handleDragStart(event, index, "task")}
                 // prop function that is called when element is being dragged over (to drop target)
-                handleDrag={(event) => handleDrag(event, index, "justAdded")}
+                handleDragOver={(event) => handleDragOver(event, index, "task")}
                 // prop function that is called when element is dropped in valid drop target
-                handleDrop={(event) => handleDrop(event, "justAdded")}
+                handleDrop={(event) => handleDrop(event, "task")}
                 // prop function needed to reset drag capability
                 dragEnd={(event) => {
                   event.target.style.borderTop = "";
@@ -134,27 +152,22 @@ function App() {
         
           {/* div for task list */}
           <div className="secondBox" 
-            onDragOver={(event) => handleDrag(event, null, "justAdded")} 
+            onDragOver={(event) => handleDragOver(event, null, "justAdded")} 
             onDrop={(event) => handleDrop(event, justAddedTasks.length, "secondBox")}
           >
             {/* edit line */}
             {justAddedTasks.map((justAddedTasks, index) => (
               <div
-                className="tasks" 
+                className="target" 
                 id="someNewTask"
                 draggable
                 key={index}
-                onDragStart={(event) => handleDragStart(event, index, "secondBox")}
-                onDragOver={(event) => handleDrag(event, index, "secondBox")}
-                onDrop={(event) => handleDrop(event, index, "secondBox")}
-                onDragEnd={(event) => {
-                event.target.style.borderTop = "";
-                event.target.style.borderBottom = "";
-                
-                // onDrop={(event) => handleDrop(event, "task")}
-                // onDragOver={(event) => event.preventDefault()}
-                }}
+                onDragOver={handleTargetDragOver}
+                // prop function that is called when element is dropped in valid drop target
+                handleDrop={(event) => handleDrop(event, "task")}
+                onDrop={handleTargetDrop}                
               >
+                Drop target
                 {/* <span>{task}</span> */}
               </div>
             ))}
