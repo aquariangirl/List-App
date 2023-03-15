@@ -7,7 +7,8 @@ class App extends Component {
     super(props);
     this.state = {
       task: '',
-      justAddedTasks: [],
+      tasks: [],
+      
     };
   }
  
@@ -15,17 +16,26 @@ class App extends Component {
     this.setState({ task: event.target.value });
   };
 
+  // handleChange = ({target:{value}}) => this.setState({
+  //   task: value
+  // })
+
   handleSubmit = (event) => {
     event.preventDefault();
-    this.setState({ justAddedTasks: this.state.task, task: "" });
+    // this.setState({ tasks: this.state.task, task: "" });
+    this.setState({
+      tasks: [...this.state.tasks, this.state.task],
+      task: ''
+    })
   };
 
-  
 
 
 
   render() {
     const task = this.state.task;
+    const tasks = this.state.tasks;
+
 
     return (
       <div className='App'> 
@@ -33,7 +43,6 @@ class App extends Component {
       <section style={{ backgroundColor: 'white', width: '500px', height: '500px', border: '1px solid black' }}>
         {/* form for user input */}
         <br></br>
-        <form onSubmit={this.handleSubmit}>
           <input 
             type="text"
             placeholder="Enter New Task"
@@ -41,37 +50,38 @@ class App extends Component {
             onChange={this.handleChange} // allows the textbox to not clear as user types
             draggable
           />
-          <button type="submit">Add task</button>
-        </form> 
+          <button onClick={this.handleSubmit}type="submit">Add task</button>
         <br></br>
 
         {/* div for just added tasks box/section */}
-        <div className="box">
+        <div className="appContainer">
           <div className="firstBox">
-              {/* <Draggable> */}
+
+            {/* <ul>
+              {this.state.tasks.map((li,key) => <li {...{key}}>{li}</li>)}
+            </ul> */}
+
+    
               <div
-                className="task"
-                draggable
+                className="container"
                 onDragStart={(e) => {
                   e.dataTransfer.setData("text/plain", task);
-                }}
+                }
+              }
               > 
-              {this.state.justAddedTasks ? <p>{this.state.justAddedTasks}</p> : <p>No text submitted yet.</p>}
-        
-              </div>
-              {/* </Draggable> */}
-          </div>
-        
-          {/* div for task list */}
-          <div className="secondBox">
-              <div
-                className="target" 
-                id="someNewTask"
-                draggable
-                // key={index}
-              >
-                Drop target
-                {/* <span>{task}</span> */}
+              {this.state.tasks.map((li,key) =>     
+              <div className="taskContainer" {...{key}}>{li}</div>  // this allows each input to populate in separate div
+              )}
+
+              {/* {tasks.map((task, index)=>(
+                  <React.Fragment>
+                    <h3 draggable droppable onDragStart={e=> D_Start(e,index)} onDragEnter={e=> D_Enter(e,index)} onDragEnd={e=> D_End(e,index)} style={{textDecoration: todo.complete ? "line-through" : "none", background: todo.complete ? "red" : null}} onClick={e=> handleTodoClicks(e, index)} className="todo-item-text">{todo.todo}</h3>
+                    {todo.isDragging ?  <div className="drag-indicator"></div> : null}
+                  </React.Fragment>
+              ))
+              
+              } */}
+                  
               </div>
           </div>
         </div>
