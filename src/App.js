@@ -20,7 +20,7 @@ class App extends Component {
   //   task: value
   // })
 
-  handleSubmit = (event) => {
+  handleSubmitTask = (event) => {
     event.preventDefault();
     // this.setState({ tasks: this.state.task, task: "" });
     this.setState({
@@ -28,6 +28,16 @@ class App extends Component {
       task: ''
     })
   };
+
+  handleDelete = (event) => {
+    event.preventDefault();
+    // this.setState({ tasks: this.state.task, task: "" });
+    this.setState({
+      tasks: [...this.state.tasks.splice(event,1), this.state.task],
+      task: ''
+    })
+  };
+
 
 
 
@@ -49,7 +59,7 @@ class App extends Component {
             onChange={this.handleChange} // allows the textbox to not clear as user types
             draggable
           />
-          <button onClick={this.handleSubmit}type="submit">Add task</button>
+          <button onClick={this.handleSubmitTask} type="submit">Add task</button>
       
         <br></br><br></br><br></br>
 
@@ -60,9 +70,10 @@ class App extends Component {
               e.dataTransfer.setData("text/plain", task);
             }}> 
 
-            {this.state.tasks.map((li,key) =>    // this allows each input to populate in separate div
+            {this.state.tasks.map((li,key) =>    // allows each input to populate in separate div
             <div 
             className="taskContainer" {...{key}}>{li}
+            <button onClick={this.handleDelete} type="delete">X</button>
             </div>  
             )}
 
