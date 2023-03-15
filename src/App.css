@@ -5,7 +5,7 @@
   padding: 10px;
 } 
 
-.tasks {
+.task {
   border: 3px solid #b96363;
   background-color: #f7b5b5;
   border-radius: .5em;
@@ -13,7 +13,11 @@
   cursor: move;
 }
 
-.firstBox {
+.box.target {
+  border: 3px dotted #666;
+}
+
+.container {
   border: 3px solid #73AD21;
   padding: 10px;
 }
@@ -23,7 +27,7 @@
   padding: 10px;
 }
 
-.box {
+.container {
   border: 3px solid red;
   padding: 10px;
 }

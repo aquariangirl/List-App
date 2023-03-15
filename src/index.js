@@ -2,7 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+// import reportWebVitals from './reportWebVitals';
+
+// ReactDOM.render(
+//   <React.StrictMode>
+//     <App />
+//   </React.StrictMode>,
+//   document.getElementById('root')
+// );
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -25,13 +32,10 @@ scripts.forEach((src) => {
   document.head.appendChild(script);
 });
 
-// Define your React component
-// function App() {
-//   return <h1>Hello, World!</h1>;
-// }
+// React component function is defined in App.js
 
 // Render your component to the DOM
 ReactDOM.render(<App />, document.getElementById('root'));
 
 
-reportWebVitals();
+// reportWebVitals();
