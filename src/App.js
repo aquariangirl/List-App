@@ -38,9 +38,8 @@ class App extends Component {
 
 
     return (
-      <div className='App'> 
+      <div className='App' style={{ backgroundColor: 'white', width: '500px', height: '500px', border: '1px solid black' }}>  
     
-      <section style={{ backgroundColor: 'white', width: '500px', height: '500px', border: '1px solid black' }}>
         {/* form for user input */}
         <br></br>
           <input 
@@ -51,27 +50,21 @@ class App extends Component {
             draggable
           />
           <button onClick={this.handleSubmit}type="submit">Add task</button>
-        <br></br>
+      
+        <br></br><br></br><br></br>
 
         {/* div for just added tasks box/section */}
         <div className="appContainer">
-          <div className="firstBox">
+          <div className="firstBox"
+            onDragStart={(e) => {
+              e.dataTransfer.setData("text/plain", task);
+            }}> 
 
-            {/* <ul>
-              {this.state.tasks.map((li,key) => <li {...{key}}>{li}</li>)}
-            </ul> */}
-
-    
-              <div
-                className="container"
-                onDragStart={(e) => {
-                  e.dataTransfer.setData("text/plain", task);
-                }
-              }
-              > 
-              {this.state.tasks.map((li,key) =>     
-              <div className="taskContainer" {...{key}}>{li}</div>  // this allows each input to populate in separate div
-              )}
+            {this.state.tasks.map((li,key) =>    // this allows each input to populate in separate div
+            <div 
+            className="taskContainer" {...{key}}>{li}
+            </div>  
+            )}
 
               {/* {tasks.map((task, index)=>(
                   <React.Fragment>
@@ -84,11 +77,7 @@ class App extends Component {
                   
               </div>
           </div>
-        </div>
-      </section>
-    </div>
-
-       
+        </div>   
     );
   }
 }
