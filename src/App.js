@@ -2,6 +2,8 @@ import './App.css';
 import React, { Component } from "react";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
+import InputBox from './components/inputbox';
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -10,16 +12,16 @@ class App extends Component {
       tasks: [],  
     };
   }
- 
+
   handleChange = (event) => {
     this.setState({ task: event.target.value });
   };
   
-  handleSubmitTask = (event) => {
+  handleSubmitTask = () => {
     // event.preventDefault();
     this.setState({
       tasks: [...this.state.tasks, this.state.task],
-      task: ''
+      task: '',
     });
   };
 
@@ -35,23 +37,20 @@ class App extends Component {
 
     return (
       <div className='App' style={{ backgroundColor: 'white', width: '500px', height: '500px', border: '1px solid black' }}>  
-        <br />
-
-        <div className='inputBox'>
-          <input 
-          type="text"
-          placeholder="Enter New Task"
-          value={this.state.task}
-          onChange={this.handleChange}  // allows the textbox to not clear as user types
-          />
-            <button onClick={this.handleSubmitTask}>Add task</button>
-        </div>
-
+    
         <DragDropContext>
-          <Droppable droppableId='tasks'>
+
+          <InputBox
+            task={this.state.task}
+            handleChange={this.handleChange}
+            handleSubmitTask={this.handleSubmitTask}
+          />
+          <br />
+
+          <Droppable droppableId="tasks">
             {(provided) => (
               <div className='tasks' {...provided.droppableProps} ref={provided.innerRef}>
-                {this.state.tasks.map(({task}, index) => {  // allows each input to populate in separate div
+                {this.state.tasks.map((task, index) => {  // allows each input to populate in separate div
                   return (
                     <Draggable key={task} draggableId={task} index={index}>
                       {(provided) => (
