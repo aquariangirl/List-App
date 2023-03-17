@@ -35,7 +35,7 @@ scripts.forEach((src) => {
 // React component function is defined in App.js
 
 // Render your component to the DOM
-ReactDOM.render(<App />, document.getElementById('root'));
+// ReactDOM.render(<App />, document.getElementById('root'));
 
 
 // reportWebVitals();
