@@ -9,9 +9,6 @@ export class TaskFeature extends Component {
       task: '',
       tasks: [],  
     };
-
-
-
   }
 
   handleChange = (event) => {
