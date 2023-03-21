@@ -73,7 +73,7 @@ export class TaskFeature extends Component {
           <input
             type='text'
             placeholder='Enter New Task'
-            value={this.task}
+            value={this.state.task}  // "state" allows handleSubmitTask to clear onClick
             onChange={this.handleChange}
           />
           <button onClick={this.handleSubmitTask}>Add task</button>
